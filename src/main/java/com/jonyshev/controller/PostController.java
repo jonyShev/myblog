@@ -115,6 +115,13 @@ public class PostController {
         return "redirect/posts/" + id;
     }
 
+    @PostMapping("/posts/{id}/comments")
+    public String addComment(@PathVariable Long id,
+                             @RequestParam String text) {
+        postService.addCommentToPost(id, text);
+        return "redirect/posts/" + id;
+    }
+
 
     private String detectContentType(String fileName) {
         String lowerCaseFileName = fileName.toLowerCase();

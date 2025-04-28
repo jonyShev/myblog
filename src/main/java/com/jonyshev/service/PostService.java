@@ -20,4 +20,6 @@ public interface PostService {
     void deletePost(Long id);
 
     void likePost(Long id, boolean increase);
+
+    void addCommentToPost(Long id, String text);
 }

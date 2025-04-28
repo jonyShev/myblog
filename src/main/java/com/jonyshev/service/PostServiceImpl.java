@@ -1,5 +1,6 @@
 package com.jonyshev.service;
 
+import com.jonyshev.model.Comment;
 import com.jonyshev.model.Post;
 import com.jonyshev.model.Tag;
 import com.jonyshev.repository.PostRepository;
@@ -10,10 +11,7 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Optional;
-import java.util.UUID;
+import java.util.*;
 
 @Service
 public class PostServiceImpl implements PostService {
@@ -88,6 +86,27 @@ public class PostServiceImpl implements PostService {
         Post post = optionalPost.get();
         int likes = post.getLikesCount();
         post.setLikesCount(increase ? likes + 1 : Math.max(0, likes - 1));
+        postRepository.update(post);
+    }
+
+    @Override
+    public void addCommentToPost(Long id, String text) {
+        Optional<Post> optionalPost = postRepository.findById(id);
+        if (optionalPost.isEmpty()) {
+            throw new IllegalArgumentException("Пост не найден");
+        }
+
+        Post post = optionalPost.get();
+        List<Comment> comments = post.getComments();
+        if (comments == null) {
+            post.setComments(new ArrayList<>());
+        }
+
+        long commentId = UUID.randomUUID().getMostSignificantBits() & Long.MAX_VALUE;
+        Comment comment = new Comment(commentId, text);
+
+        post.getComments().add(comment);
+
         postRepository.update(post);
     }
 
