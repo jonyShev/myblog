@@ -2,7 +2,6 @@ package com.jonyshev.service;
 
 import com.jonyshev.model.Comment;
 import com.jonyshev.model.Post;
-import com.jonyshev.model.Tag;
 import com.jonyshev.repository.PostRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
