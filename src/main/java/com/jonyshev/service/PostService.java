@@ -1,6 +1,7 @@
 package com.jonyshev.service;
 
 import com.jonyshev.model.Post;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 import java.util.Optional;
@@ -10,7 +11,7 @@ public interface PostService {
 
     Optional<Post> getPostById(Long id);
 
-    Post createPost(Post post);
+    Long createPost(String title, String text, String tags, MultipartFile image);
 
     void updatePost(Post post);
 
