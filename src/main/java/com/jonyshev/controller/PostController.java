@@ -88,7 +88,7 @@ public class PostController {
     public String likePost(@PathVariable Long id,
                            @RequestParam boolean like) {
         postService.likePost(id, like);
-        return "redirect/posts/" + id;
+        return "redirect:/posts/" + id;
     }
 
     @PostMapping("/posts/{id}/edit")
@@ -96,12 +96,12 @@ public class PostController {
                                Model model) {
         Optional<Post> optionalPost = postService.getPostById(id);
         if (optionalPost.isEmpty()) {
-            return "redirect/posts";
+            return "redirect:/posts";
         }
 
         Post post = optionalPost.get();
         model.addAttribute("post", post);
-        return "redirect/add-post";
+        return "redirect:/add-post";
     }
 
     @PostMapping("/posts/{id}")
@@ -112,14 +112,22 @@ public class PostController {
             @RequestParam(required = false) String tags,
             @RequestParam(required = false) MultipartFile image) {
         postService.updatePost(id, title, text, tags, image);
-        return "redirect/posts/" + id;
+        return "redirect:/posts/" + id;
     }
 
     @PostMapping("/posts/{id}/comments")
     public String addComment(@PathVariable Long id,
                              @RequestParam String text) {
         postService.addCommentToPost(id, text);
-        return "redirect/posts/" + id;
+        return "redirect:/posts/" + id;
+    }
+
+    @PostMapping("/posts/{id}/comments/{commentId}")
+    public String updateComment(@PathVariable Long id,
+                                @PathVariable Long commentId,
+                                @RequestParam String text){
+        postService.updateComment(id, commentId, text);
+        return "redirect:/posts/" + id;
     }
 
 

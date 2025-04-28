@@ -22,4 +22,6 @@ public interface PostService {
     void likePost(Long id, boolean increase);
 
     void addCommentToPost(Long id, String text);
+
+    void updateComment(Long id, Long commentId, String text);
 }
