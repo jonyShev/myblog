@@ -55,6 +55,25 @@ public class PostServiceImpl implements PostService {
     }
 
     @Override
+    public void updatePost(Long id, String title, String text, String tags, MultipartFile image) {
+        Optional<Post> optionalPost = postRepository.findById(id);
+        if (optionalPost.isEmpty()) {
+            throw new IllegalArgumentException("Пост не найден");
+        }
+
+        Post post = optionalPost.get();
+        post.setTitle(title);
+        post.setText(text);
+        if (tags != null && !tags.isBlank()) {
+            post.setTags(parseTags(tags));
+        }
+        if (image != null && !image.isEmpty()) {
+            post.setImagePath(saveImageFile(image));
+        }
+        postRepository.update(post);
+    }
+
+    @Override
     public void deletePost(Long id) {
         postRepository.deleteById(id);
     }

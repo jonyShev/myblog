@@ -93,9 +93,9 @@ public class PostController {
 
     @PostMapping("/posts/{id}/edit")
     public String showEditForm(@PathVariable Long id,
-                               Model model){
+                               Model model) {
         Optional<Post> optionalPost = postService.getPostById(id);
-        if (optionalPost.isEmpty()){
+        if (optionalPost.isEmpty()) {
             return "redirect/posts";
         }
 
@@ -103,6 +103,18 @@ public class PostController {
         model.addAttribute("post", post);
         return "redirect/add-post";
     }
+
+    @PostMapping("/posts/{id}")
+    public String updatePost(
+            @PathVariable Long id,
+            @RequestParam String title,
+            @RequestParam String text,
+            @RequestParam(required = false) String tags,
+            @RequestParam(required = false) MultipartFile image) {
+        postService.updatePost(id, title, text, tags, image);
+        return "redirect/posts/" + id;
+    }
+
 
     private String detectContentType(String fileName) {
         String lowerCaseFileName = fileName.toLowerCase();

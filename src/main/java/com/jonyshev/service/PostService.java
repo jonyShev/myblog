@@ -7,13 +7,15 @@ import java.util.List;
 import java.util.Optional;
 
 public interface PostService {
-    List<Post>  getAllPosts(String search, int pageSize, int pageNumber);
+    List<Post> getAllPosts(String search, int pageSize, int pageNumber);
 
     Optional<Post> getPostById(Long id);
 
     Long createPost(String title, String text, String tags, MultipartFile image);
 
     void updatePost(Post post);
+
+    void updatePost(Long id, String title, String text, String tags, MultipartFile image);
 
     void deletePost(Long id);
 
