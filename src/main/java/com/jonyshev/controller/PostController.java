@@ -125,8 +125,15 @@ public class PostController {
     @PostMapping("/posts/{id}/comments/{commentId}")
     public String updateComment(@PathVariable Long id,
                                 @PathVariable Long commentId,
-                                @RequestParam String text){
+                                @RequestParam String text) {
         postService.updateComment(id, commentId, text);
+        return "redirect:/posts/" + id;
+    }
+
+    @PostMapping("/posts/{id}/comments/{commentId}/delete")
+    public String deleteComment(@PathVariable Long id,
+                                @PathVariable Long commentId) {
+        postService.deleteComment(id, commentId);
         return "redirect:/posts/" + id;
     }
 

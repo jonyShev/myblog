@@ -132,6 +132,28 @@ public class PostServiceImpl implements PostService {
         postRepository.update(post);
     }
 
+    @Override
+    public void deleteComment(Long id, Long commentId) {
+        Optional<Post> optionalPost = postRepository.findById(id);
+        if (optionalPost.isEmpty()) {
+            throw new IllegalArgumentException("Пост не найден");
+        }
+
+        Post post = optionalPost.get();
+        List<Comment> comments = post.getComments();
+        if (comments == null) {
+            throw new IllegalArgumentException("У поста нет комментов");
+        }
+
+        boolean removed = comments.removeIf(x -> x.getId().equals(commentId));
+
+        if (!removed) {
+            throw new IllegalArgumentException("Комментарий не найден");
+        }
+
+        postRepository.update(post);
+    }
+
     private String saveImageFile(MultipartFile image) {
         if (image == null || image.isEmpty()) {
             return null;
