@@ -53,12 +53,7 @@ public class PostServiceImpl implements PostService {
 
     @Override
     public void updatePost(Long id, String title, String text, String tags, MultipartFile image) {
-        Optional<Post> optionalPost = postRepository.findById(id);
-        if (optionalPost.isEmpty()) {
-            throw new IllegalArgumentException("Пост не найден");
-        }
-
-        Post post = optionalPost.get();
+        Post post = getPostOrThrow(id);
         post.setTitle(title);
         post.setText(text);
         if (tags != null && !tags.isBlank()) {
@@ -72,21 +67,13 @@ public class PostServiceImpl implements PostService {
 
     @Override
     public void deletePost(Long id) {
-        Optional<Post> optionalPost = postRepository.findById(id);
-        if (optionalPost.isEmpty()) {
-            throw new IllegalArgumentException("Пост не найден");
-        }
+        getPostOrThrow(id);
         postRepository.deleteById(id);
     }
 
     @Override
     public void likePost(Long id, boolean increase) {
-        Optional<Post> optionalPost = postRepository.findById(id);
-        if (optionalPost.isEmpty()) {
-            throw new IllegalArgumentException("Пост не найден");
-        }
-
-        Post post = optionalPost.get();
+        Post post = getPostOrThrow(id);
         int likes = post.getLikesCount();
         post.setLikesCount(increase ? likes + 1 : Math.max(0, likes - 1));
         postRepository.update(post);
@@ -94,16 +81,8 @@ public class PostServiceImpl implements PostService {
 
     @Override
     public void addCommentToPost(Long id, String text) {
-        Optional<Post> optionalPost = postRepository.findById(id);
-        if (optionalPost.isEmpty()) {
-            throw new IllegalArgumentException("Пост не найден");
-        }
-
-        Post post = optionalPost.get();
-        List<Comment> comments = post.getComments();
-        if (comments == null) {
-            post.setComments(new ArrayList<>());
-        }
+        Post post = getPostOrThrow(id);
+        List<Comment> comments = getOrCreateComments(post);
 
         long commentId = UUID.randomUUID().getMostSignificantBits() & Long.MAX_VALUE;
         Comment comment = new Comment(commentId, text);
@@ -115,16 +94,8 @@ public class PostServiceImpl implements PostService {
 
     @Override
     public void updateComment(Long id, Long commentId, String text) {
-        Optional<Post> optionalPost = postRepository.findById(id);
-        if (optionalPost.isEmpty()) {
-            throw new IllegalArgumentException("Пост не найден");
-        }
-
-        Post post = optionalPost.get();
-        List<Comment> comments = post.getComments();
-        if (comments == null) {
-            throw new IllegalArgumentException("У поста нет комментов");
-        }
+        Post post = getPostOrThrow(id);
+        List<Comment> comments = getCommentsOrThrow(post);
 
         Comment comment = comments.stream()
                 .filter(x -> x.getId().equals(commentId))
@@ -138,16 +109,8 @@ public class PostServiceImpl implements PostService {
 
     @Override
     public void deleteComment(Long id, Long commentId) {
-        Optional<Post> optionalPost = postRepository.findById(id);
-        if (optionalPost.isEmpty()) {
-            throw new IllegalArgumentException("Пост не найден");
-        }
-
-        Post post = optionalPost.get();
-        List<Comment> comments = post.getComments();
-        if (comments == null) {
-            throw new IllegalArgumentException("У поста нет комментов");
-        }
+        Post post = getPostOrThrow(id);
+        List<Comment> comments = getCommentsOrThrow(post);
 
         boolean removed = comments.removeIf(x -> x.getId().equals(commentId));
 
@@ -157,6 +120,7 @@ public class PostServiceImpl implements PostService {
 
         postRepository.update(post);
     }
+
 
     private String saveImageFile(MultipartFile image) {
         if (image == null || image.isEmpty()) {
@@ -183,5 +147,25 @@ public class PostServiceImpl implements PostService {
         return Arrays.stream(tags.trim().split("\\s+"))
                 .filter(s -> !s.isBlank())
                 .toList();
+    }
+
+    private Post getPostOrThrow(Long id) {
+        return postRepository.findById(id).orElseThrow(() -> new IllegalArgumentException("Пост не найден"));
+    }
+
+    private List<Comment> getOrCreateComments(Post post) {
+        List<Comment> comments = post.getComments();
+        if (post.getComments() == null) {
+            post.setComments(new ArrayList<>());
+        }
+        return post.getComments();
+    }
+
+    private static List<Comment> getCommentsOrThrow(Post post) {
+        List<Comment> comments = post.getComments();
+        if (comments == null) {
+            throw new IllegalArgumentException("У поста нет комментов");
+        }
+        return comments;
     }
 }
