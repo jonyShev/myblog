@@ -72,6 +72,10 @@ public class PostServiceImpl implements PostService {
 
     @Override
     public void deletePost(Long id) {
+        Optional<Post> optionalPost = postRepository.findById(id);
+        if (optionalPost.isEmpty()) {
+            throw new IllegalArgumentException("Пост не найден");
+        }
         postRepository.deleteById(id);
     }
 

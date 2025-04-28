@@ -137,6 +137,14 @@ public class PostController {
         return "redirect:/posts/" + id;
     }
 
+    @PostMapping("/posts/{id}/delete")
+    public String deletePost(@PathVariable Long id){
+        postService.deletePost(id);
+        return "redirect:/posts";
+    }
+
+
+
 
     private String detectContentType(String fileName) {
         String lowerCaseFileName = fileName.toLowerCase();
