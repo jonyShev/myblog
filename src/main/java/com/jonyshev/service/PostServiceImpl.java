@@ -61,7 +61,15 @@ public class PostServiceImpl implements PostService {
 
     @Override
     public void likePost(Long id, boolean increase) {
-        postRepository.like(id, increase);
+        Optional<Post> optionalPost = postRepository.findById(id);
+        if (optionalPost.isEmpty()) {
+            throw new IllegalArgumentException("Пост не найден");
+        }
+
+        Post post = optionalPost.get();
+        int likes = post.getLikesCount();
+        post.setLikesCount(increase ? likes + 1 : Math.max(0, likes - 1));
+        postRepository.update(post);
     }
 
     private String saveImageFile(MultipartFile image) {

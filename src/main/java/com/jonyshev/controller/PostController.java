@@ -83,6 +83,13 @@ public class PostController {
         }
     }
 
+    @GetMapping("/posts/{id}/like")
+    public String likePost(@PathVariable Long id,
+                           @RequestParam boolean like) {
+        postService.likePost(id, like);
+        return "redirect/posts/" + id;
+    }
+
     private String detectContentType(String fileName) {
         String lowerCaseFileName = fileName.toLowerCase();
         if (lowerCaseFileName.endsWith(".png")) {
