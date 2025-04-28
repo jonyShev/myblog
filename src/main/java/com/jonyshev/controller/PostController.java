@@ -16,6 +16,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.List;
+import java.util.Optional;
 
 @Controller
 public class PostController {
@@ -88,6 +89,19 @@ public class PostController {
                            @RequestParam boolean like) {
         postService.likePost(id, like);
         return "redirect/posts/" + id;
+    }
+
+    @PostMapping("/posts/{id}/edit")
+    public String showEditForm(@PathVariable Long id,
+                               Model model){
+        Optional<Post> optionalPost = postService.getPostById(id);
+        if (optionalPost.isEmpty()){
+            return "redirect/posts";
+        }
+
+        Post post = optionalPost.get();
+        model.addAttribute("post", post);
+        return "redirect/add-post";
     }
 
     private String detectContentType(String fileName) {
