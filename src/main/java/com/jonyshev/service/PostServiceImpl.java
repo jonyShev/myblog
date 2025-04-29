@@ -2,7 +2,9 @@ package com.jonyshev.service;
 
 import com.jonyshev.model.Comment;
 import com.jonyshev.model.Post;
+import com.jonyshev.repository.CommentRepository;
 import com.jonyshev.repository.PostRepository;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -16,19 +18,27 @@ import java.util.*;
 public class PostServiceImpl implements PostService {
 
     private final PostRepository postRepository;
+    private final CommentRepository commentRepository;
 
-    public PostServiceImpl(PostRepository postRepository) {
+    @Autowired
+    public PostServiceImpl(PostRepository postRepository, CommentRepository commentRepository) {
         this.postRepository = postRepository;
+        this.commentRepository = commentRepository;
     }
+
 
     @Override
     public List<Post> getAllPosts(String search, int pageSize, int pageNumber) {
-        return postRepository.findAll(search, pageSize, pageNumber);
+        List<Post> posts = postRepository.findAll(search, pageSize, pageNumber);
+        posts.forEach(post -> post.setComments(commentRepository.findByPostId(post.getId())));
+        return posts;
     }
 
     @Override
     public Optional<Post> getPostById(Long id) {
-        return postRepository.findById(id);
+        Optional<Post> optional = postRepository.findById(id);
+        optional.ifPresent(post -> post.setComments(commentRepository.findByPostId(id)));
+        return optional;
     }
 
     @Override
@@ -81,43 +91,26 @@ public class PostServiceImpl implements PostService {
 
     @Override
     public void addCommentToPost(Long id, String text) {
-        Post post = getPostOrThrow(id);
+        Comment comment = Comment.builder()
+                .text(text)
+                .build();
 
-        long commentId = UUID.randomUUID().getMostSignificantBits() & Long.MAX_VALUE;
-        Comment comment = new Comment(commentId, text);
-
-        post.getComments().add(comment);
-
-        postRepository.update(post);
+        commentRepository.save(id, comment);
     }
 
     @Override
     public void updateComment(Long id, Long commentId, String text) {
-        Post post = getPostOrThrow(id);
-        List<Comment> comments = getCommentsOrThrow(post);
+        Comment comment = Comment.builder()
+                .id(commentId)
+                .text(text)
+                .build();
 
-        Comment comment = comments.stream()
-                .filter(x -> x.getId().equals(commentId))
-                .findFirst()
-                .orElseThrow(() -> new IllegalArgumentException("Комментарий не найден"));
-
-        comment.setText(text);
-
-        postRepository.update(post);
+        commentRepository.update(id, comment);
     }
 
     @Override
     public void deleteComment(Long id, Long commentId) {
-        Post post = getPostOrThrow(id);
-        List<Comment> comments = getCommentsOrThrow(post);
-
-        boolean removed = comments.removeIf(x -> x.getId().equals(commentId));
-
-        if (!removed) {
-            throw new IllegalArgumentException("Комментарий не найден");
-        }
-
-        postRepository.update(post);
+        commentRepository.delete(id, commentId);
     }
 
 
