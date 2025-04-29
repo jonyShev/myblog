@@ -53,22 +53,40 @@ public class PostRepositoryImpl implements PostRepository {
 
     @Override
     public Post save(Post post) {
-        return null;
+        String sql = "INSERT INTO posts (title, text, image_path, tags, likes_count) INTO posts VALUES (?,?,?,?,?) RETURNING ID";
+        Long id = jdbcTemplate.queryForObject(sql, Long.class,
+                post.getTitle(),
+                post.getText(),
+                post.getImagePath(),
+                String.join(" ", post.getTags()),
+                post.getLikesCount()
+        );
+        post.setId(id);
+        return post;
     }
 
     @Override
     public void update(Post post) {
-
+        String sql = "UPDATE posts SET title = ?, text = ?, image_path = ?, tags = ?, likes_count = ? WHERE ID = ?";
+        jdbcTemplate.update(sql,
+                post.getTitle(),
+                post.getText(),
+                post.getImagePath(),
+                String.join(" ", post.getTags()),
+                post.getLikesCount(),
+                post.getId()
+        );
     }
 
     @Override
     public void deleteById(Long id) {
-
+        jdbcTemplate.update("DELETE FROM posts WHERE id = ?", id);
     }
 
     @Override
     public void like(Long id, boolean increase) {
-
+        String sql = "UPDATE posts SET likes_count = likes_count " + (increase ? "+ 1" : "- 1") + " WHERE id = ?";
+        jdbcTemplate.update(sql, id);
     }
 
     private List<String> splitTags(String tags) {
