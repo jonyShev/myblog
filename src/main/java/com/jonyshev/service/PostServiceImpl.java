@@ -82,7 +82,6 @@ public class PostServiceImpl implements PostService {
     @Override
     public void addCommentToPost(Long id, String text) {
         Post post = getPostOrThrow(id);
-        List<Comment> comments = getOrCreateComments(post);
 
         long commentId = UUID.randomUUID().getMostSignificantBits() & Long.MAX_VALUE;
         Comment comment = new Comment(commentId, text);
@@ -154,7 +153,6 @@ public class PostServiceImpl implements PostService {
     }
 
     private List<Comment> getOrCreateComments(Post post) {
-        List<Comment> comments = post.getComments();
         if (post.getComments() == null) {
             post.setComments(new ArrayList<>());
         }
