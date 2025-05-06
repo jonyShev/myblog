@@ -36,7 +36,7 @@ public class PostRepositoryImpl implements PostRepository {
 
         String sql = "SELECT * FROM posts " +
                 (hasSearch ? "WHERE title ILIKE ? " : "") +
-                "ORDERED BY id DESC LIMIT ? OFFSET ?";
+                "ORDER BY id DESC LIMIT ? OFFSET ?";
 
         int offset = (pageNumber - 1) * pageSize;
 
@@ -53,7 +53,7 @@ public class PostRepositoryImpl implements PostRepository {
 
     @Override
     public Post save(Post post) {
-        String sql = "INSERT INTO posts (title, text, image_path, tags, likes_count) INTO posts VALUES (?,?,?,?,?) RETURNING ID";
+        String sql = "INSERT INTO posts (title, text, image_path, tags, likes_count) VALUES (?,?,?,?,?) RETURNING ID";
         Long id = jdbcTemplate.queryForObject(sql, Long.class,
                 post.getTitle(),
                 post.getText(),
