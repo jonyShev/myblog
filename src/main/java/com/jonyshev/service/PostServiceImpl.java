@@ -144,19 +144,4 @@ public class PostServiceImpl implements PostService {
     private Post getPostOrThrow(Long id) {
         return postRepository.findById(id).orElseThrow(() -> new IllegalArgumentException("Пост не найден"));
     }
-
-    private List<Comment> getOrCreateComments(Post post) {
-        if (post.getComments() == null) {
-            post.setComments(new ArrayList<>());
-        }
-        return post.getComments();
-    }
-
-    private static List<Comment> getCommentsOrThrow(Post post) {
-        List<Comment> comments = post.getComments();
-        if (comments == null) {
-            throw new IllegalArgumentException("У поста нет комментов");
-        }
-        return comments;
-    }
 }
