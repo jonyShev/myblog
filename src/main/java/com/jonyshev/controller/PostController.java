@@ -2,6 +2,7 @@ package com.jonyshev.controller;
 
 import com.jonyshev.model.Post;
 import com.jonyshev.service.PostService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -22,6 +23,7 @@ import java.util.Optional;
 public class PostController {
     private final PostService postService;
 
+    @Autowired
     public PostController(PostService postService) {
         this.postService = postService;
     }
@@ -138,13 +140,10 @@ public class PostController {
     }
 
     @PostMapping("/posts/{id}/delete")
-    public String deletePost(@PathVariable Long id){
+    public String deletePost(@PathVariable Long id) {
         postService.deletePost(id);
         return "redirect:/posts";
     }
-
-
-
 
     private String detectContentType(String fileName) {
         String lowerCaseFileName = fileName.toLowerCase();

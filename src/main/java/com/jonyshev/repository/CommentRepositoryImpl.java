@@ -4,9 +4,11 @@ import com.jonyshev.model.Comment;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
+import org.springframework.stereotype.Repository;
 
 import java.util.List;
 
+@Repository
 public class CommentRepositoryImpl implements CommentRepository {
 
     private final JdbcTemplate jdbcTemplate;
@@ -30,19 +32,19 @@ public class CommentRepositoryImpl implements CommentRepository {
     @Override
     public void save(Long postId, Comment comment) {
         String sql = "INSERT INTO comments (post_id, text) VALUES (?, ?)";
-        jdbcTemplate.update(sql, commentRowMapper, postId, comment.getText());
+        jdbcTemplate.update(sql, postId, comment.getText());
 
     }
 
     @Override
     public void update(Long postId, Comment comment) {
         String sql = "UPDATE comments SET text = ? WHERE id = ? AND post_id = ?";
-        jdbcTemplate.update(sql, commentRowMapper, comment.getText(), comment.getId(), postId);
+        jdbcTemplate.update(sql, comment.getText(), comment.getId(), postId);
     }
 
     @Override
     public void delete(Long postId, Long commentId) {
         String sql = "DELETE FROM comments WHERE id = ? AND post_id = ?";
-        jdbcTemplate.update(sql, commentRowMapper, commentId, postId);
+        jdbcTemplate.update(sql, commentId, postId);
     }
 }
