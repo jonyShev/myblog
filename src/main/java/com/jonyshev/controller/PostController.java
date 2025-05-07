@@ -93,7 +93,7 @@ public class PostController {
         }
     }
 
-    @GetMapping("/posts/{id}/like")
+    @PostMapping("/posts/{id}/like")
     public String likePost(@PathVariable Long id,
                            @RequestParam boolean like) {
         postService.likePost(id, like);
@@ -110,7 +110,7 @@ public class PostController {
 
         Post post = optionalPost.get();
         model.addAttribute("post", post);
-        return "redirect:/add-post";
+        return "add-post";
     }
 
     @PostMapping("/posts/{id}")
