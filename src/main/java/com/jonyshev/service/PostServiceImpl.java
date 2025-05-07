@@ -124,12 +124,14 @@ public class PostServiceImpl implements PostService {
             return null;
         }
 
-        String imageName = UUID.randomUUID() + "_" + image.getOriginalFilename();
-        Path pathToImage = Paths.get("uploads", imageName);
-
         try {
-            Files.createDirectories(pathToImage.getParent());
+            String imageName = UUID.randomUUID() + "_" + image.getOriginalFilename();
+            Path uploadDir = Paths.get(System.getProperty("user.dir"), "uploads");
+            Files.createDirectories(uploadDir); // Создаём, если не существует
+
+            Path pathToImage = uploadDir.resolve(imageName);
             image.transferTo(pathToImage.toFile());
+
             return imageName;
         } catch (IOException e) {
             throw new RuntimeException("Не удалось сохранить файл", e);
