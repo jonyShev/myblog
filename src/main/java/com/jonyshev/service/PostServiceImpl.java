@@ -113,6 +113,11 @@ public class PostServiceImpl implements PostService {
         commentRepository.delete(id, commentId);
     }
 
+    @Override
+    public int countPosts(String search) {
+        return postRepository.countPosts(search);
+    }
+
 
     private String saveImageFile(MultipartFile image) {
         if (image == null || image.isEmpty()) {

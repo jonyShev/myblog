@@ -89,6 +89,17 @@ public class PostRepositoryImpl implements PostRepository {
         jdbcTemplate.update(sql, id);
     }
 
+    @Override
+    public int countPosts(String search) {
+        boolean hasSearch = search != null && !search.isBlank();
+
+        String sql = "SELECT COUNT(*) FROM posts " + (hasSearch ? "WHERE title ILIKE ?" : "");
+
+        return hasSearch
+                ? jdbcTemplate.queryForObject(sql, Integer.class, "%" + search + "%")
+                : jdbcTemplate.queryForObject(sql, Integer.class);
+    }
+
     private List<String> splitTags(String tags) {
         if (tags == null || tags.isBlank()) {
             return List.of();

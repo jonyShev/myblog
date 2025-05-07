@@ -1,5 +1,6 @@
 package com.jonyshev.controller;
 
+import com.jonyshev.model.Paging;
 import com.jonyshev.model.Post;
 import com.jonyshev.service.PostService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -40,8 +41,14 @@ public class PostController {
             @RequestParam(required = false, defaultValue = "1") int pageNumber,
             Model model) {
         List<Post> posts = postService.getAllPosts(search, pageSize, pageNumber);
+        int totalPosts = postService.countPosts(search);
+
+        boolean hasNext = (pageSize * pageNumber) < totalPosts;
+        boolean hasPrevious = pageNumber > 1;
+
         model.addAttribute("posts", posts);
         model.addAttribute("search", search);
+        model.addAttribute("paging", new Paging(pageNumber, pageSize, hasNext, hasPrevious));
         return "posts";
     }
 

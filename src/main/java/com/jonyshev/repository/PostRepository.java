@@ -17,4 +17,6 @@ public interface PostRepository {
     void deleteById(Long id);
 
     void like(Long id, boolean increase);
+
+    int countPosts(String search);
 }
