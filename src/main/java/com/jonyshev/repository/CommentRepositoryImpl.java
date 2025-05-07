@@ -25,7 +25,7 @@ public class CommentRepositoryImpl implements CommentRepository {
 
     @Override
     public List<Comment> findByPostId(Long postId) {
-        String sql = "SELECT * FROM comments WHERE id = ? ORDER BY id";
+        String sql = "SELECT * FROM comments WHERE post_id = ? ORDER BY id";
         return jdbcTemplate.query(sql, commentRowMapper, postId);
     }
 
