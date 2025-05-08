@@ -92,5 +92,22 @@ class PostServiceImplTest {
                 post.getText().equals(text) &&
                 post.getTags().equals(List.of(tags))));
     }
+
+    @Test
+    public void deletePost_shouldDeletePost_whenIdValid() {
+        //given
+        Long id = 1L;
+        Post existingPost = Post.builder()
+                .id(id)
+                .build();
+
+        when(postRepository.findById(id)).thenReturn(Optional.ofNullable(existingPost));
+
+        //when
+        postService.deletePost(id);
+
+        //then
+        verify(postRepository, times(1)).deleteById(id);
+    }
     }
 }
