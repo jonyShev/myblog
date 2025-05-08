@@ -140,5 +140,21 @@ class PostServiceImplTest {
         verify(commentRepository, times(1)).save(eq(id), argThat(
                 comment -> comment.getText().equals(text)));
     }
+
+    @Test
+    public void updateComment_shouldUpdateComment_whenDataValid() {
+        //given
+        Long id = 1L;
+        Long commentId = 10L;
+        String text = "text";
+
+        //when
+        postService.updateComment(id, commentId, text);
+
+        //then
+        verify(commentRepository, times(1)).update(eq(id), argThat(
+                comment -> comment.getId().equals(commentId) &&
+                        comment.getText().equals(text)));
+    }
     }
 }
