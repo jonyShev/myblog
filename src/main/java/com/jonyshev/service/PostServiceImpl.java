@@ -57,11 +57,6 @@ public class PostServiceImpl implements PostService {
     }
 
     @Override
-    public void updatePost(Post post) {
-        postRepository.update(post);
-    }
-
-    @Override
     public void updatePost(Long id, String title, String text, String tags, MultipartFile image) {
         Post post = getPostOrThrow(id);
         post.setTitle(title);

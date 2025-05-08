@@ -13,8 +13,6 @@ public interface PostService {
 
     Long createPost(String title, String text, String tags, MultipartFile image);
 
-    void updatePost(Post post);
-
     void updatePost(Long id, String title, String text, String tags, MultipartFile image);
 
     void deletePost(Long id);
