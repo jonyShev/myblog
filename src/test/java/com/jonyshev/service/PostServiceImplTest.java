@@ -128,5 +128,17 @@ class PostServiceImplTest {
         verify(postRepository, times(1)).update(argThat(post -> post.getId().equals(id) &&
                 post.getLikesCount() == 1));
     }
+
+    @Test
+    public void addCommentToPost_shouldSaveComment_whenDataValid() {
+        //given
+        Long id = 1L;
+        String text = "text";
+        //when
+        postService.addCommentToPost(id, text);
+        //then
+        verify(commentRepository, times(1)).save(eq(id), argThat(
+                comment -> comment.getText().equals(text)));
+    }
     }
 }
