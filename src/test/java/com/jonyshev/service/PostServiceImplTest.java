@@ -1,5 +1,6 @@
 package com.jonyshev.service;
 
+import com.jonyshev.model.Comment;
 import com.jonyshev.model.Post;
 import com.jonyshev.repository.CommentRepository;
 import com.jonyshev.repository.PostRepository;
@@ -11,6 +12,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
+import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentMatchers.any;
@@ -57,5 +59,38 @@ class PostServiceImplTest {
                         post.getText().equals(text) &&
                         post.getTags().containsAll(List.of(tags))
         ));
+    }
+
+    @Test
+    void updatePost_shouldUpdate_whenValid() {
+        //given
+        //Long id, String title, String text, String tags, MultipartFile image
+        Long id = 1L;
+        String title = "title";
+        String text = "title";
+        String tags = "tags";
+
+        Post existingPost = Post.builder()
+                .id(id)
+                .title(title)
+                .text(text)
+                .tags(List.of(tags))
+                .build();
+
+        when(postRepository.findById(id)).thenReturn(Optional.ofNullable(existingPost));
+
+        MultipartFile image = mock(MultipartFile.class);
+
+        when(image.isEmpty()).thenReturn(true);
+
+        //when
+        postService.updatePost(id, title, text, tags, image);
+
+        //then
+        verify(postRepository, times(1)).update(argThat(post -> post.getId().equals(id) &&
+                post.getTitle().equals(title) &&
+                post.getText().equals(text) &&
+                post.getTags().equals(List.of(tags))));
+    }
     }
 }
