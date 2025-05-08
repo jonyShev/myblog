@@ -156,5 +156,40 @@ class PostServiceImplTest {
                 comment -> comment.getId().equals(commentId) &&
                         comment.getText().equals(text)));
     }
+
+    @Test
+    public void getAllPosts_shouldReturnPosts_whenDataValid() {
+        //given
+        String search = "search";
+        int pageSize = 5;
+        int pageNumber = 1;
+        Long postId = 1L;
+
+        Post post = Post.builder()
+                .id(postId)
+                .build();
+        List<Post> posts = List.of(post);
+
+        when(postRepository.findAll(search, pageSize, pageNumber)).thenReturn(posts);
+
+        Comment comment = Comment.builder()
+                .id(10L)
+                .text("text")
+                .build();
+        List<Comment> comments = List.of(comment);
+
+        when(commentRepository.findByPostId(postId)).thenReturn(comments);
+
+        //when
+        List<Post> result = postService.getAllPosts(search, pageSize, pageNumber);
+
+        //then
+        assertEquals(1, result.size());
+        assertEquals(postId, result.get(0).getId());
+        assertEquals(1, result.get(0).getComments().size());
+        assertEquals("text", result.get(0).getComments().get(0).getText());
+
+        verify(postRepository, times(1)).findAll(eq(search), eq(pageSize), eq(pageNumber));
+        verify(commentRepository, times(1)).findByPostId(eq(postId));
     }
 }
