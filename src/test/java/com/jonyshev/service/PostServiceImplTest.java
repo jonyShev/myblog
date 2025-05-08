@@ -192,4 +192,33 @@ class PostServiceImplTest {
         verify(postRepository, times(1)).findAll(eq(search), eq(pageSize), eq(pageNumber));
         verify(commentRepository, times(1)).findByPostId(eq(postId));
     }
+
+    @Test
+    public void getPostById_shouldReturnOptionalPost_whenIdValid() {
+        //given
+        Long id = 1L;
+
+        Post post = Post.builder().id(id).build();
+        Optional<Post> optional = Optional.of(post);
+
+        when(postRepository.findById(id)).thenReturn(optional);
+
+        Comment comment = Comment.builder()
+                .id(100L)
+                .text("text")
+                .build();
+        List<Comment> comments = List.of(comment);
+
+        when(commentRepository.findByPostId(id)).thenReturn(comments);
+
+        //when
+        Optional<Post> optionalResult = postService.getPostById(id);
+
+        //then
+        assertEquals(1L, optionalResult.get().getId());
+        assertEquals(comments, optionalResult.get().getComments());
+
+        verify(postRepository, times(1)).findById(eq(id));
+        verify(commentRepository, times(1)).findByPostId(eq(id));
+    }
 }
