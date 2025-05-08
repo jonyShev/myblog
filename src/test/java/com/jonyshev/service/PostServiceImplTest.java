@@ -109,5 +109,24 @@ class PostServiceImplTest {
         //then
         verify(postRepository, times(1)).deleteById(id);
     }
+
+    @Test
+    public void likePost_shouldUpdatePost_whenDataValid() {
+        //given
+        Long id = 1L;
+        int likesCount = 0;
+        boolean increase = true;
+        Post existingPost = Post.builder()
+                .id(id)
+                .likesCount(likesCount)
+                .build();
+
+        when(postRepository.findById(id)).thenReturn(Optional.ofNullable(existingPost));
+        //when
+        postService.likePost(id, increase);
+        //then
+        verify(postRepository, times(1)).update(argThat(post -> post.getId().equals(id) &&
+                post.getLikesCount() == 1));
+    }
     }
 }
