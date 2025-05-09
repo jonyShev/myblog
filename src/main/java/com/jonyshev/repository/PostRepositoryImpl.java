@@ -4,8 +4,12 @@ import com.jonyshev.model.Post;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
+import org.springframework.jdbc.support.GeneratedKeyHolder;
+import org.springframework.jdbc.support.KeyHolder;
 import org.springframework.stereotype.Repository;
 
+import java.sql.PreparedStatement;
+import java.sql.Statement;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
@@ -53,14 +57,21 @@ public class PostRepositoryImpl implements PostRepository {
 
     @Override
     public Post save(Post post) {
-        String sql = "INSERT INTO posts (title, text, image_path, tags, likes_count) VALUES (?,?,?,?,?) RETURNING ID";
-        Long id = jdbcTemplate.queryForObject(sql, Long.class,
-                post.getTitle(),
-                post.getText(),
-                post.getImagePath(),
-                String.join(" ", post.getTags()),
-                post.getLikesCount()
-        );
+        String sql = "INSERT INTO posts (title, text, image_path, tags, likes_count) VALUES (?,?,?,?,?)";
+
+        KeyHolder keyHolder = new GeneratedKeyHolder();
+
+        jdbcTemplate.update(connection -> {
+            PreparedStatement ps = connection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
+            ps.setString(1, post.getTitle());
+            ps.setString(2, post.getText());
+            ps.setString(3, post.getImagePath());
+            ps.setString(4, String.join(" ", post.getTags()));
+            ps.setInt(5, post.getLikesCount());
+            return ps;
+        }, keyHolder);
+
+        Long id = keyHolder.getKey().longValue();
         post.setId(id);
         return post;
     }
