@@ -221,4 +221,30 @@ class PostServiceImplTest {
         verify(postRepository, times(1)).findById(eq(id));
         verify(commentRepository, times(1)).findByPostId(eq(id));
     }
+
+    @Test
+    public void deleteComment_shouldDeleteComment_whenDataValid(){
+        //given
+        Long id = 1L;
+        Long commentId = 100L;
+
+        //when
+        postService.deleteComment(id, commentId);
+        //then
+        verify(commentRepository, times(1)).delete(id, commentId);
+    }
+
+    @Test
+    public void countPosts_shouldReturnCount_whenSearchValid(){
+        //given
+        String search = "search";
+        when(postRepository.countPosts(search)).thenReturn(100);
+
+        //when
+        int result = postService.countPosts(search);
+
+        //then
+        assertEquals(100, result);
+        verify(postRepository, times(1)).countPosts(search);
+    }
 }
