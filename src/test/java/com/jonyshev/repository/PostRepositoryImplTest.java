@@ -141,7 +141,24 @@ class PostRepositoryImplTest {
     }
 
     @Test
-    void deleteById() {
+    void deleteById_shouldDeletePost_whenIdValid() {
+        //given
+        Post original = Post.builder()
+                .title("original")
+                .text("originalText")
+                .imagePath("originalPath")
+                .tags(List.of("originalTags"))
+                .likesCount(1)
+                .build();
+
+        Long id = postRepository.save(original).getId();
+
+        //when
+        postRepository.deleteById(id);
+        Optional<Post> result = postRepository.findById(id);
+
+        //then
+        assertTrue(result.isEmpty());
     }
 
     @Test
