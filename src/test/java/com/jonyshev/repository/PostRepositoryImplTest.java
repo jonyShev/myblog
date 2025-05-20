@@ -109,7 +109,35 @@ class PostRepositoryImplTest {
     }
 
     @Test
-    void update() {
+    void update_shouldUpdatePost_whenPostIsValid() {
+        //given
+        Post original = Post.builder()
+                .title("original")
+                .text("originalText")
+                .imagePath("originalPath")
+                .tags(List.of("originalTags"))
+                .likesCount(1)
+                .build();
+
+        Long id = postRepository.save(original).getId();
+
+        Post updatePost = Post.builder()
+                .id(id)
+                .title("update")
+                .text("updateText")
+                .imagePath("updatePath")
+                .tags(List.of("updateTags"))
+                .likesCount(2)
+                .build();
+
+        //when
+        postRepository.update(updatePost);
+        Optional<Post> optional = postRepository.findById(id);
+        //then
+        assertTrue(optional.isPresent());
+        Post post = optional.get();
+        assertEquals("update", post.getTitle());
+        assertEquals("updateText", post.getText());
     }
 
     @Test
