@@ -83,7 +83,26 @@ class PostRepositoryImplTest {
     }
 
     @Test
-    void findById() {
+    void findById_shouldReturnCorrectPost() {
+        //given
+        Post post1 = Post.builder()
+                .title("title1")
+                .text("text1")
+                .imagePath("path1")
+                .likesCount(1)
+                .tags(List.of("java", "spring"))
+                .build();
+
+        Long id = postRepository.save(post1).getId();
+        //when
+        Optional<Post> result = postRepository.findById(id);
+
+        //then
+        assertTrue(result.isPresent());
+        Post resultPost = result.get();
+        assertEquals("title1", resultPost.getTitle());
+        assertEquals("text1", resultPost.getText());
+        assertEquals("path1", resultPost.getImagePath());
     }
 
     @Test
