@@ -42,7 +42,42 @@ class PostRepositoryImplTest {
     }
 
     @Test
-    void findAll() {
+    void findAll_shouldReturnAllPosts_BySearchPageSizeAndPageNumber() {
+        //given
+        Post post1 = Post.builder()
+                .title("title1")
+                .text("text1")
+                .imagePath("path1")
+                .likesCount(1)
+                .tags(List.of("java", "spring"))
+                .build();
+
+        Post post2 = Post.builder()
+                .title("title2")
+                .text("text2")
+                .imagePath("path2")
+                .likesCount(2)
+                .tags(List.of("java", "sql"))
+                .build();
+
+        Post post3 = Post.builder()
+                .title("title3")
+                .text("text3")
+                .imagePath("path3")
+                .likesCount(3)
+                .tags(List.of("maven", "gradle"))
+                .build();
+
+        postRepository.save(post1);
+        postRepository.save(post2);
+        postRepository.save(post3);
+
+        //when
+        List<Post> posts = postRepository.findAll("java", 10, 1);
+
+        //then
+        assertEquals(2, posts.size());
+        assertTrue(posts.stream().allMatch(post -> post.getTags().contains("java")));
     }
 
     @Test

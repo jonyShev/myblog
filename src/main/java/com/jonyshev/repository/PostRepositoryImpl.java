@@ -39,13 +39,13 @@ public class PostRepositoryImpl implements PostRepository {
         boolean hasSearch = search != null && !search.isBlank();
 
         String sql = "SELECT * FROM posts " +
-                (hasSearch ? "WHERE title ILIKE ? " : "") +
+                (hasSearch ? "WHERE LOWER(tags) LIKE ? " : "") +
                 "ORDER BY id DESC LIMIT ? OFFSET ?";
 
         int offset = (pageNumber - 1) * pageSize;
 
         return hasSearch
-                ? jdbcTemplate.query(sql, postRowMapper, "%" + search + "%", pageSize, offset)
+                ? jdbcTemplate.query(sql, postRowMapper, "%" + search.toLowerCase() + "%", pageSize, offset)
                 : jdbcTemplate.query(sql, postRowMapper, pageSize, offset);
     }
 
