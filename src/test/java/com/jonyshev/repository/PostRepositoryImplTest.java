@@ -162,7 +162,25 @@ class PostRepositoryImplTest {
     }
 
     @Test
-    void like() {
+    void like_shouldDecreaseIncreaseLikes() {
+        //given
+        Post original = Post.builder()
+                .title("original")
+                .text("originalText")
+                .imagePath("originalPath")
+                .tags(List.of("originalTags"))
+                .likesCount(1)
+                .build();
+
+        Long id = postRepository.save(original).getId();
+
+        //when
+        postRepository.like(id, true);
+        Post likedPost = postRepository.findById(id).orElseThrow();
+
+        //then
+        assertEquals(2, likedPost.getLikesCount());
+
     }
 
     @Test
