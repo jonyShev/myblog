@@ -104,10 +104,10 @@ public class PostRepositoryImpl implements PostRepository {
     public int countPosts(String search) {
         boolean hasSearch = search != null && !search.isBlank();
 
-        String sql = "SELECT COUNT(*) FROM posts " + (hasSearch ? "WHERE title ILIKE ?" : "");
+        String sql = "SELECT COUNT(*) FROM posts " + (hasSearch ? "WHERE LOWER(tags) LIKE ?" : "");
 
         return hasSearch
-                ? jdbcTemplate.queryForObject(sql, Integer.class, "%" + search + "%")
+                ? jdbcTemplate.queryForObject(sql, Integer.class, "%" + search.toLowerCase() + "%")
                 : jdbcTemplate.queryForObject(sql, Integer.class);
     }
 

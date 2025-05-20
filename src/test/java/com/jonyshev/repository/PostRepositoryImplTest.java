@@ -39,6 +39,8 @@ class PostRepositoryImplTest {
                     likes_count INTEGER DEFAULT 0
                 );
                 """);
+
+        jdbcTemplate.execute("DELETE FROM posts");
     }
 
     @Test
@@ -119,6 +121,40 @@ class PostRepositoryImplTest {
     }
 
     @Test
-    void countPosts() {
+    void countPosts_shouldReturnCountOfPosts_whenIsPresentBySearch() {
+        // given
+        Post post1 = Post.builder()
+                .title("Java")
+                .text("text")
+                .tags(List.of("java"))
+                .build();
+
+        Post post2 = Post.builder()
+                .title("Spring")
+                .text("text")
+                .tags(List.of("java", "spring"))
+                .build();
+
+        Post post3 = Post.builder()
+                .title("Docker")
+                .text("text")
+                .tags(List.of("devops"))
+                .build();
+
+        postRepository.save(post1);
+        postRepository.save(post2);
+        postRepository.save(post3);
+
+        //when
+        int all = postRepository.countPosts("");
+        int javaPosts = postRepository.countPosts("java");
+        int springPosts = postRepository.countPosts("spring");
+        int devopsPosts = postRepository.countPosts("devops");
+
+        //then
+        assertEquals(3, all);
+        assertEquals(2, javaPosts);
+        assertEquals(1, springPosts);
+        assertEquals(1, devopsPosts);
     }
 }
