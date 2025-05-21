@@ -112,6 +112,21 @@ class CommentRepositoryImplTest {
     }
 
     @Test
-    void delete() {
+    void delete_shouldDeleteComment_byPostIdAndCommentId() {
+        //given
+        Long postId = 1L;
+        Long commentId = 1L;
+
+        jdbcTemplate.execute("INSERT INTO posts (id, title) VALUES (1, 'post')");
+        jdbcTemplate.execute("INSERT INTO comments (id, post_id, text) VALUES (1, 1, 'comment1')");
+        jdbcTemplate.execute("INSERT INTO comments (id, post_id, text) VALUES (2, 1, 'comment2')");
+
+        //when
+        commentRepository.delete(postId, commentId);
+        List<Comment> comments = commentRepository.findByPostId(postId);
+
+        //then
+        assertEquals(1, comments.size());
+        assertEquals("comment2", comments.get(0).getText());
     }
 }
