@@ -12,7 +12,7 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import java.util.List;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 @ExtendWith(SpringExtension.class)
 @ContextConfiguration(classes = TestJdbcConfig.class)
@@ -92,7 +92,23 @@ class CommentRepositoryImplTest {
     }
 
     @Test
-    void update() {
+    void update_shouldUpdateComment_byPostId() {
+        //given
+        Long postId = 1L;
+        Comment comment = Comment.builder()
+                .id(1L)
+                .text("update_comment")
+                .build();
+
+        jdbcTemplate.execute("INSERT INTO posts (id, title) VALUES (1, 'post')");
+        jdbcTemplate.execute("INSERT INTO comments (id, post_id, text) VALUES (1, 1, 'original_comment')");
+
+        //when
+        commentRepository.update(postId, comment);
+        List<Comment> comments = commentRepository.findByPostId(postId);
+
+        //then
+        assertEquals("update_comment", comments.get(0).getText());
     }
 
     @Test
