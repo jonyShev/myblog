@@ -1,5 +1,6 @@
 package com.jonyshev.config;
 
+import com.jonyshev.repository.CommentRepositoryImpl;
 import com.jonyshev.repository.PostRepositoryImpl;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -29,5 +30,10 @@ public class TestJdbcConfig {
     @Bean
     public PostRepositoryImpl postRepository(JdbcTemplate jdbcTemplate) {
         return new PostRepositoryImpl(jdbcTemplate);
+    }
+
+    @Bean
+    public CommentRepositoryImpl commentRepository(JdbcTemplate jdbcTemplate) {
+        return new CommentRepositoryImpl(jdbcTemplate);
     }
 }
