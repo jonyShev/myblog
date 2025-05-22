@@ -3,6 +3,7 @@ package com.jonyshev.controller;
 import com.jonyshev.config.AppConfig;
 import com.jonyshev.config.TestJdbcConfig;
 import com.jonyshev.config.WebMvcConfig;
+import com.jonyshev.model.Post;
 import com.jonyshev.service.PostService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -16,7 +17,11 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
 
+import java.util.List;
+import java.util.Optional;
+
 import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
@@ -56,5 +61,25 @@ class PostControllerTest {
                 .andExpect(redirectedUrl("/posts/" + postId));
 
         verify(postService).likePost(postId, true);
+    }
+
+    @Test
+    void getPostById_shouldReturnPostTemplate_whenPostExist() throws Exception {
+        //given
+        Long postId = 1L;
+        Post post = Post.builder()
+                .id(postId)
+                .text("text")
+                .comments(List.of())
+                .build();
+
+        //when
+        when(postService.getPostById(postId)).thenReturn(Optional.of(post));
+
+        //then
+        mockMvc.perform(get("/posts/1"))
+                .andExpect(status().isOk())
+                .andExpect(view().name("post"))
+                .andExpect(model().attribute("post", post));
     }
 }
