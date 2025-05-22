@@ -82,4 +82,17 @@ class PostControllerTest {
                 .andExpect(view().name("post"))
                 .andExpect(model().attribute("post", post));
     }
+
+    @Test
+    void getPostById_shouldRedirect_whenPostDoesNotExist() throws Exception {
+        //given
+        Long postId = 1L;
+
+        //when
+        when(postService.getPostById(postId)).thenReturn(Optional.empty());
+        //then
+        mockMvc.perform(get("/posts/1"))
+                .andExpect(status().is3xxRedirection())
+                .andExpect(redirectedUrl("/posts"));
+    }
 }
