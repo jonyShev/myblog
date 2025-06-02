@@ -12,6 +12,7 @@ import java.sql.PreparedStatement;
 import java.sql.Statement;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 @Repository
@@ -71,8 +72,13 @@ public class PostRepositoryImpl implements PostRepository {
             return ps;
         }, keyHolder);
 
-        Long id = keyHolder.getKey().longValue();
-        post.setId(id);
+        Map<String, Object> keys = keyHolder.getKeys();
+        if (keys != null && keys.containsKey("id")) {
+            post.setId(((Number) keys.get("id")).longValue());
+        } else {
+            throw new IllegalStateException("Не удалось получить ID нового поста из базы");
+        }
+
         return post;
     }
 
