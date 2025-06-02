@@ -1,4 +1,4 @@
-package com.jonyshev.model;
+package com.jonyshev.myblog.model;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
